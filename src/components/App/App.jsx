@@ -1,8 +1,9 @@
 import React from 'react';
-import { Container } from './App.styled';
-import { ContactForm } from './ContactForm/ContactForm';
+import { Container, Title } from './App.styled';
+import { ContactForm } from '../ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList ';
 import { Filter } from 'components/Filter/Filter';
+import { nanoid } from 'nanoid';
 export class App extends React.Component {
   state = {
     contacts: [
@@ -13,18 +14,38 @@ export class App extends React.Component {
     ],
     filter: '',
   };
-  addContact = data => {
-    // const { contacts } = this.state;
-    console.log(data);
+  handleAddContact = data => {
+    const newObject = {
+      id: nanoid(),
+      name: data.name,
+      number: data.number,
+    };
+    if (newObject.name !== this.state.contacts.name) {
+      this.setState(prevState => ({
+        contacts: [...prevState.contacts, newObject],
+      }));
+    } else {
+      window.alert(`${newObject.name} is already in contacts.`);
+    }
   };
+
+  handleDeleteContact = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  };
+
   render() {
     return (
       <Container>
         <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.addContact} />
-        <h2>Contacts</h2>
+        <ContactForm onSubmit={this.handleAddContact} />
+        <Title>Contacts</Title>
         <Filter />
-        <ContactList contacts={this.state.contacts} />
+        <ContactList
+          contacts={this.state.contacts}
+          onDeleteContact={this.handleDeleteContact}
+        />
       </Container>
     );
   }
