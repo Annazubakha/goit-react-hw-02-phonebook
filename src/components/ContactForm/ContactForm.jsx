@@ -7,8 +7,6 @@ export class ContactForm extends React.Component {
     number: '',
   };
 
-  id = nanoid();
-
   handleChange = event => {
     const { name, value } = event.currentTarget;
     this.setState({ [name]: value });
@@ -24,6 +22,7 @@ export class ContactForm extends React.Component {
       number: '',
     });
   };
+
   render() {
     return (
       <form className={s.form} onSubmit={this.handleSubmit}>
@@ -32,20 +31,19 @@ export class ContactForm extends React.Component {
           <input
             type="text"
             name="name"
-            id={this.id}
+            id={nanoid()}
             required
             value={this.state.name}
             onChange={this.handleChange}
           />
         </label>
         <label className={s.label}>
-          {' '}
           Number{' '}
           <input
             type="tel"
             name="number"
             required
-            id={this.id}
+            id={nanoid()}
             value={this.state.number}
             onChange={this.handleChange}
           />

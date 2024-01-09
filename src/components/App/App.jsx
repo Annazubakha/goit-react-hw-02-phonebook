@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Title } from './App.styled';
 import { ContactForm } from '../ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList ';
-import { Filter } from 'components/Filter/Filter';
+import { ContactsFilter } from 'components/Filter/Filter';
 import { nanoid } from 'nanoid';
 export class App extends React.Component {
   state = {
@@ -20,7 +20,10 @@ export class App extends React.Component {
       name: data.name,
       number: data.number,
     };
-    if (newObject.name !== this.state.contacts.name) {
+    const oldContact = this.state.contacts.some(
+      ({ name }) => name.toLowerCase() === newObject.name.toLowerCase()
+    );
+    if (!oldContact) {
       this.setState(prevState => ({
         contacts: [...prevState.contacts, newObject],
       }));
@@ -28,22 +31,35 @@ export class App extends React.Component {
       window.alert(`${newObject.name} is already in contacts.`);
     }
   };
-
   handleDeleteContact = id => {
     this.setState(prevState => ({
       contacts: prevState.contacts.filter(contact => contact.id !== id),
     }));
   };
+  handleChangeFilterStr = e => {
+    this.setState({ filter: e.target.value });
+  };
+
+  getFilteredData = (contacts, filter) => {
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(filter.toLowerCase())
+    );
+  };
 
   render() {
+    const { filter, contacts } = this.state;
+    const filteredUsers = this.getFilteredData(contacts, filter);
     return (
       <Container>
         <h1>Phonebook</h1>
         <ContactForm onSubmit={this.handleAddContact} />
         <Title>Contacts</Title>
-        <Filter />
+        <ContactsFilter
+          onChangeFilter={this.handleChangeFilterStr}
+          filterStr={filter}
+        />
         <ContactList
-          contacts={this.state.contacts}
+          contacts={filteredUsers}
           onDeleteContact={this.handleDeleteContact}
         />
       </Container>
